@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { OAuthServerProvider, OAuthRegisteredClientsStore } from '@modelcontextprotocol/sdk/server/auth/provider.js';
 import {
   OAuthClientInformation,
@@ -42,10 +42,11 @@ export function renderLoginForm(params: {
     <p>Enter your password to connect Claude.ai to your BookStack instance.</p>
     ${error ? `<div class="error">\u26A0 ${error}</div>` : ''}
     <form method="POST" action="/authorize">
+      <input type="hidden" name="response_type" value="code">
       <input type="hidden" name="client_id" value="${clientId}">
       <input type="hidden" name="redirect_uri" value="${redirectUri}">
       <input type="hidden" name="code_challenge" value="${codeChallenge}">
-      <input type="hidden" name="code_challenge_method" value="${codeChallengeMethod}">
+      <input type="hidden" name="code_challenge_method" value="S256">
       <input type="hidden" name="state" value="${state}">
       <input type="password" name="password" placeholder="Password" autofocus>
       <button type="submit">Connect</button>
@@ -79,15 +80,32 @@ export function createOAuthProvider(): OAuthServerProvider {
       params: AuthorizationParams,
       res: Response,
     ): Promise<void> => {
-      const html = renderLoginForm({
-        clientId: client.client_id,
-        redirectUri: String(params.redirectUri ?? ''),
-        codeChallenge: params.codeChallenge ?? '',
-        codeChallengeMethod: params.codeChallengeMethod ?? 'S256',
-        state: params.state ?? '',
-      });
+      const req = (res as unknown as { req: Request }).req;
+      const redirectUri = params.redirectUri ?? '';
+      const codeChallenge = params.codeChallenge ?? '';
+      const state = params.state ?? '';
+
+      if (req.method === 'POST') {
+        const password = (req.body as Record<string, string>)?.password;
+        if (password === config.MCP_AUTH_PASSWORD) {
+          // Issue auth code and redirect to callback
+          const code = uuidv4();
+          store.saveAuthCode(code, { client_id: client.client_id, redirect_uri: redirectUri, code_challenge: codeChallenge, state });
+          const callbackUrl = new URL(redirectUri);
+          callbackUrl.searchParams.set('code', code);
+          if (state) callbackUrl.searchParams.set('state', state);
+          res.redirect(callbackUrl.toString());
+        } else {
+          // Wrong password — re-render with error
+          res.setHeader('Content-Type', 'text/html');
+          res.status(401).send(renderLoginForm({ clientId: client.client_id, redirectUri, codeChallenge, codeChallengeMethod: 'S256', state, error: 'Incorrect password. Please try again.' }));
+        }
+        return;
+      }
+
+      // GET — show login form
       res.setHeader('Content-Type', 'text/html');
-      res.send(html);
+      res.send(renderLoginForm({ clientId: client.client_id, redirectUri, codeChallenge, codeChallengeMethod: 'S256', state }));
     },
 
     challengeForAuthorizationCode: async (
