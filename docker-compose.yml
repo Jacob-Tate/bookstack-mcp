@@ -1,0 +1,18 @@
+services:
+  bookstack-mcp:
+    image: ghcr.io/jacob-tate/bookstack-mcp:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - mcp-data:/app/data
+    environment:
+      BOOKSTACK_URL: ${BOOKSTACK_URL}
+      BOOKSTACK_TOKEN_ID: ${BOOKSTACK_TOKEN_ID}
+      BOOKSTACK_TOKEN_SECRET: ${BOOKSTACK_TOKEN_SECRET}
+      MCP_AUTH_PASSWORD: ${MCP_AUTH_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      BASE_URL: ${BASE_URL}
+    restart: unless-stopped
+
+volumes:
+  mcp-data:
