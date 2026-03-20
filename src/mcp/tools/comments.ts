@@ -2,7 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { bookstack } from '../../bookstack/client.js';
 
-const ok = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data, null, 2) }] });
+const ok = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const err = (e: unknown) => ({
   content: [{ type: 'text' as const, text: `Error: ${e instanceof Error ? e.message : String(e)}` }],
   isError: true as const,
