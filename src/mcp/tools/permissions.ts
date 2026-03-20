@@ -16,7 +16,7 @@ export function registerPermissionTools(server: McpServer): void {
     'Get the permission overrides for a specific content item.',
     {
       content_type: contentTypeSchema,
-      content_id: z.number().int(),
+      content_id: z.coerce.number().int(),
     },
     async ({ content_type, content_id }) => {
       try {
@@ -33,12 +33,12 @@ export function registerPermissionTools(server: McpServer): void {
     'Update the permission overrides for a specific content item.',
     {
       content_type: contentTypeSchema,
-      content_id: z.number().int(),
-      owner_id: z.number().int().optional().describe('User ID of the new owner'),
+      content_id: z.coerce.number().int(),
+      owner_id: z.coerce.number().int().optional().describe('User ID of the new owner'),
       role_permissions: z
         .array(
           z.object({
-            role_id: z.number().int(),
+            role_id: z.coerce.number().int(),
             view: z.boolean(),
             create: z.boolean(),
             update: z.boolean(),

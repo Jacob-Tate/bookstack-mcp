@@ -13,8 +13,8 @@ export function registerCommentTools(server: McpServer): void {
     'list-comments',
     'List comments visible to the user.',
     {
-      count: z.number().int().min(1).max(500).optional().default(20),
-      offset: z.number().int().min(0).optional().default(0),
+      count: z.coerce.number().int().min(1).max(500).optional().default(20),
+      offset: z.coerce.number().int().min(0).optional().default(0),
     },
     async ({ count, offset }) => {
       try {
@@ -30,9 +30,9 @@ export function registerCommentTools(server: McpServer): void {
     'create-comment',
     'Create a new comment on a page.',
     {
-      page_id: z.number().int().describe('ID of the page to comment on'),
+      page_id: z.coerce.number().int().describe('ID of the page to comment on'),
       html: z.string().describe('HTML content of the comment'),
-      reply_to: z.number().int().optional().describe('local_id of the parent comment to reply to'),
+      reply_to: z.coerce.number().int().optional().describe('local_id of the parent comment to reply to'),
       content_ref: z.string().optional().describe('Optional reference to page content'),
     },
     async (body) => {
@@ -48,7 +48,7 @@ export function registerCommentTools(server: McpServer): void {
   server.tool(
     'get-comment',
     'Get a single comment by ID.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         const result = await bookstack.get(`comments/${id}`);
@@ -63,7 +63,7 @@ export function registerCommentTools(server: McpServer): void {
     'update-comment',
     'Update a comment.',
     {
-      id: z.number().int(),
+      id: z.coerce.number().int(),
       html: z.string().optional().describe('New HTML content'),
       archived: z.boolean().optional().describe('Archive or unarchive the comment'),
     },
@@ -80,7 +80,7 @@ export function registerCommentTools(server: McpServer): void {
   server.tool(
     'delete-comment',
     'Delete a comment permanently.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         await bookstack.delete(`comments/${id}`);

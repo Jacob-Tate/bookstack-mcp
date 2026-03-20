@@ -13,8 +13,8 @@ export function registerRoleTools(server: McpServer): void {
     'list-roles',
     'List roles in the system. Requires admin permissions.',
     {
-      count: z.number().int().min(1).max(500).optional().default(20),
-      offset: z.number().int().min(0).optional().default(0),
+      count: z.coerce.number().int().min(1).max(500).optional().default(20),
+      offset: z.coerce.number().int().min(0).optional().default(0),
     },
     async ({ count, offset }) => {
       try {
@@ -49,7 +49,7 @@ export function registerRoleTools(server: McpServer): void {
   server.tool(
     'get-role',
     'Get a single role by ID.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         const result = await bookstack.get(`roles/${id}`);
@@ -64,7 +64,7 @@ export function registerRoleTools(server: McpServer): void {
     'update-role',
     'Update a role. Requires admin permissions.',
     {
-      id: z.number().int(),
+      id: z.coerce.number().int(),
       display_name: z.string().min(1).max(180).optional(),
       description: z.string().optional(),
       permissions: z.array(z.string()).optional().describe('Array of permission names to grant'),
@@ -84,7 +84,7 @@ export function registerRoleTools(server: McpServer): void {
   server.tool(
     'delete-role',
     'Delete a role. Requires admin permissions.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         await bookstack.delete(`roles/${id}`);

@@ -13,8 +13,8 @@ export function registerAttachmentTools(server: McpServer): void {
     'list-attachments',
     'List attachments visible to the user.',
     {
-      count: z.number().int().min(1).max(500).optional().default(20),
-      offset: z.number().int().min(0).optional().default(0),
+      count: z.coerce.number().int().min(1).max(500).optional().default(20),
+      offset: z.coerce.number().int().min(0).optional().default(0),
     },
     async ({ count, offset }) => {
       try {
@@ -31,7 +31,7 @@ export function registerAttachmentTools(server: McpServer): void {
     'Create an attachment as an external link attached to a page.',
     {
       name: z.string().min(1).max(255),
-      uploaded_to: z.number().int().describe('Page ID to attach to'),
+      uploaded_to: z.coerce.number().int().describe('Page ID to attach to'),
       link: z.string().url().describe('External URL for the attachment'),
     },
     async (body) => {
@@ -47,7 +47,7 @@ export function registerAttachmentTools(server: McpServer): void {
   server.tool(
     'get-attachment',
     'Get a single attachment by ID.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         const result = await bookstack.get(`attachments/${id}`);
@@ -62,9 +62,9 @@ export function registerAttachmentTools(server: McpServer): void {
     'update-attachment',
     'Update an attachment.',
     {
-      id: z.number().int(),
+      id: z.coerce.number().int(),
       name: z.string().min(1).max(255).optional(),
-      uploaded_to: z.number().int().optional().describe('Page ID to move attachment to'),
+      uploaded_to: z.coerce.number().int().optional().describe('Page ID to move attachment to'),
       link: z.string().optional().describe('New external URL (for link-type attachments)'),
     },
     async ({ id, ...body }) => {
@@ -80,7 +80,7 @@ export function registerAttachmentTools(server: McpServer): void {
   server.tool(
     'delete-attachment',
     'Delete an attachment permanently.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         await bookstack.delete(`attachments/${id}`);

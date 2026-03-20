@@ -13,8 +13,8 @@ export function registerRecycleBinTools(server: McpServer): void {
     'list-recycle-bin',
     'List items in the recycle bin. Requires admin permissions.',
     {
-      count: z.number().int().min(1).max(500).optional().default(20),
-      offset: z.number().int().min(0).optional().default(0),
+      count: z.coerce.number().int().min(1).max(500).optional().default(20),
+      offset: z.coerce.number().int().min(0).optional().default(0),
     },
     async ({ count, offset }) => {
       try {
@@ -30,7 +30,7 @@ export function registerRecycleBinTools(server: McpServer): void {
     'restore-from-recycle-bin',
     'Restore a deleted item from the recycle bin.',
     {
-      deletion_id: z.number().int().describe('ID of the deletion record to restore'),
+      deletion_id: z.coerce.number().int().describe('ID of the deletion record to restore'),
     },
     async ({ deletion_id }) => {
       try {
@@ -46,7 +46,7 @@ export function registerRecycleBinTools(server: McpServer): void {
     'permanently-delete',
     'PERMANENTLY delete an item from the recycle bin. WARNING: This action is irreversible and the data cannot be recovered.',
     {
-      deletion_id: z.number().int().describe('ID of the deletion record to permanently delete'),
+      deletion_id: z.coerce.number().int().describe('ID of the deletion record to permanently delete'),
     },
     async ({ deletion_id }) => {
       try {

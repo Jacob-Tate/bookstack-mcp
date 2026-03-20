@@ -13,8 +13,8 @@ export function registerChapterTools(server: McpServer): void {
     'list-chapters',
     'List chapters visible to the user.',
     {
-      count: z.number().int().min(1).max(500).optional().default(20),
-      offset: z.number().int().min(0).optional().default(0),
+      count: z.coerce.number().int().min(1).max(500).optional().default(20),
+      offset: z.coerce.number().int().min(0).optional().default(0),
       sort: z.string().optional(),
       filter: z.string().optional().describe('Filter key=value e.g. "name:eq=My Chapter"'),
     },
@@ -35,13 +35,13 @@ export function registerChapterTools(server: McpServer): void {
     'create-chapter',
     'Create a new chapter. book_id and name are required.',
     {
-      book_id: z.number().int(),
+      book_id: z.coerce.number().int(),
       name: z.string().min(1).max(255),
       description: z.string().optional(),
       description_html: z.string().optional(),
       tags: z.array(z.object({ name: z.string(), value: z.string() })).optional(),
-      priority: z.number().int().optional(),
-      default_template_id: z.number().int().optional(),
+      priority: z.coerce.number().int().optional(),
+      default_template_id: z.coerce.number().int().optional(),
     },
     async (body) => {
       try {
@@ -56,7 +56,7 @@ export function registerChapterTools(server: McpServer): void {
   server.tool(
     'get-chapter',
     'Get a single chapter by ID, including its pages list.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         const result = await bookstack.get(`chapters/${id}`);
@@ -71,14 +71,14 @@ export function registerChapterTools(server: McpServer): void {
     'update-chapter',
     'Update a chapter.',
     {
-      id: z.number().int(),
-      book_id: z.number().int().optional(),
+      id: z.coerce.number().int(),
+      book_id: z.coerce.number().int().optional(),
       name: z.string().min(1).max(255).optional(),
       description: z.string().optional(),
       description_html: z.string().optional(),
       tags: z.array(z.object({ name: z.string(), value: z.string() })).optional(),
-      priority: z.number().int().optional(),
-      default_template_id: z.number().int().optional(),
+      priority: z.coerce.number().int().optional(),
+      default_template_id: z.coerce.number().int().optional(),
     },
     async ({ id, ...body }) => {
       try {
@@ -93,7 +93,7 @@ export function registerChapterTools(server: McpServer): void {
   server.tool(
     'delete-chapter',
     'Delete a chapter (sends to recycle bin).',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         await bookstack.delete(`chapters/${id}`);
@@ -107,7 +107,7 @@ export function registerChapterTools(server: McpServer): void {
   server.tool(
     'export-chapter-markdown',
     'Export a chapter as markdown text.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         const text = await bookstack.getText(`chapters/${id}/export/markdown`);
@@ -121,7 +121,7 @@ export function registerChapterTools(server: McpServer): void {
   server.tool(
     'export-chapter-plaintext',
     'Export a chapter as plain text.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         const text = await bookstack.getText(`chapters/${id}/export/plaintext`);

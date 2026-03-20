@@ -16,8 +16,8 @@ export function registerSearchTools(server: McpServer): void {
       query: z
         .string()
         .describe('Search query. Supports BookStack search syntax e.g. "cats {type:page} {tag:Animal=Cat}"'),
-      page: z.number().int().min(1).optional().default(1),
-      count: z.number().int().min(1).max(100).optional().default(20),
+      page: z.coerce.number().int().min(1).optional().default(1),
+      count: z.coerce.number().int().min(1).max(100).optional().default(20),
     },
     async ({ query, page, count }) => {
       try {

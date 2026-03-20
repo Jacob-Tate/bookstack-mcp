@@ -13,8 +13,8 @@ export function registerUserTools(server: McpServer): void {
     'list-users',
     'List users in the system. Requires admin permissions.',
     {
-      count: z.number().int().min(1).max(500).optional().default(20),
-      offset: z.number().int().min(0).optional().default(0),
+      count: z.coerce.number().int().min(1).max(500).optional().default(20),
+      offset: z.coerce.number().int().min(0).optional().default(0),
     },
     async ({ count, offset }) => {
       try {
@@ -33,7 +33,7 @@ export function registerUserTools(server: McpServer): void {
       name: z.string().min(1).max(255),
       email: z.string().email(),
       password: z.string().optional(),
-      roles: z.array(z.number().int()).optional().describe('Array of role IDs to assign'),
+      roles: z.array(z.coerce.number().int()).optional().describe('Array of role IDs to assign'),
       send_invite: z.boolean().optional().describe('Send an invite email to the new user'),
       language: z.string().optional().describe('Language code e.g. "en"'),
       external_auth_id: z.string().optional(),
@@ -51,7 +51,7 @@ export function registerUserTools(server: McpServer): void {
   server.tool(
     'get-user',
     'Get a single user by ID.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         const result = await bookstack.get(`users/${id}`);
@@ -66,11 +66,11 @@ export function registerUserTools(server: McpServer): void {
     'update-user',
     'Update a user. Requires admin permissions.',
     {
-      id: z.number().int(),
+      id: z.coerce.number().int(),
       name: z.string().min(1).max(255).optional(),
       email: z.string().email().optional(),
       password: z.string().optional(),
-      roles: z.array(z.number().int()).optional().describe('Array of role IDs to assign'),
+      roles: z.array(z.coerce.number().int()).optional().describe('Array of role IDs to assign'),
       language: z.string().optional(),
       external_auth_id: z.string().optional(),
     },
@@ -88,7 +88,7 @@ export function registerUserTools(server: McpServer): void {
     'delete-user',
     'Delete a user. Requires admin permissions.',
     {
-      id: z.number().int(),
+      id: z.coerce.number().int(),
       migrate_ownership_id: z
         .number()
         .int()

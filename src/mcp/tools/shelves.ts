@@ -13,8 +13,8 @@ export function registerShelfTools(server: McpServer): void {
     'list-shelves',
     'List bookshelves visible to the user.',
     {
-      count: z.number().int().min(1).max(500).optional().default(20),
-      offset: z.number().int().min(0).optional().default(0),
+      count: z.coerce.number().int().min(1).max(500).optional().default(20),
+      offset: z.coerce.number().int().min(0).optional().default(0),
       sort: z.string().optional(),
       filter: z.string().optional().describe('Filter key=value e.g. "name:eq=My Shelf"'),
     },
@@ -38,7 +38,7 @@ export function registerShelfTools(server: McpServer): void {
       name: z.string().min(1).max(255),
       description: z.string().optional(),
       description_html: z.string().optional(),
-      books: z.array(z.number().int()).optional().describe('Array of book IDs to include in this shelf'),
+      books: z.array(z.coerce.number().int()).optional().describe('Array of book IDs to include in this shelf'),
       tags: z.array(z.object({ name: z.string(), value: z.string() })).optional(),
     },
     async (body) => {
@@ -54,7 +54,7 @@ export function registerShelfTools(server: McpServer): void {
   server.tool(
     'get-shelf',
     'Get a single bookshelf by ID, including its books list.',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         const result = await bookstack.get(`shelves/${id}`);
@@ -69,11 +69,11 @@ export function registerShelfTools(server: McpServer): void {
     'update-shelf',
     'Update a bookshelf.',
     {
-      id: z.number().int(),
+      id: z.coerce.number().int(),
       name: z.string().min(1).max(255).optional(),
       description: z.string().optional(),
       description_html: z.string().optional(),
-      books: z.array(z.number().int()).optional().describe('Array of book IDs to include in this shelf'),
+      books: z.array(z.coerce.number().int()).optional().describe('Array of book IDs to include in this shelf'),
       tags: z.array(z.object({ name: z.string(), value: z.string() })).optional(),
     },
     async ({ id, ...body }) => {
@@ -89,7 +89,7 @@ export function registerShelfTools(server: McpServer): void {
   server.tool(
     'delete-shelf',
     'Delete a bookshelf (sends to recycle bin).',
-    { id: z.number().int() },
+    { id: z.coerce.number().int() },
     async ({ id }) => {
       try {
         await bookstack.delete(`shelves/${id}`);
