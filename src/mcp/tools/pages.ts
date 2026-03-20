@@ -55,11 +55,18 @@ export function registerPageTools(server: McpServer): void {
 
   server.tool(
     'get-page',
-    'Get a single page by ID, including HTML content, markdown (if available), tags, and comments.',
-    { id: z.number().int() },
-    async ({ id }) => {
+    'Get a single page by ID — returns metadata, tags, and parent info. Content fields (html, markdown) are stripped by default to save tokens; use export-page-markdown or export-page-plaintext to read content.',
+    {
+      id: z.number().int(),
+      include_content: z.boolean().optional().default(false).describe('Set true to include html and markdown fields'),
+    },
+    async ({ id, include_content }) => {
       try {
-        const result = await bookstack.get(`pages/${id}`);
+        const result = await bookstack.get<Record<string, unknown>>(`pages/${id}`);
+        if (!include_content) {
+          const { html: _h, raw_html: _r, markdown: _m, ...meta } = result;
+          return ok(meta);
+        }
         return ok(result);
       } catch (e) {
         return err(e);
