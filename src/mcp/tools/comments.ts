@@ -13,7 +13,7 @@ export function registerCommentTools(server: McpServer): void {
     'list-comments',
     'List comments visible to the user.',
     {
-      count: z.number().int().min(1).max(500).optional().default(100),
+      count: z.number().int().min(1).max(500).optional().default(20),
       offset: z.number().int().min(0).optional().default(0),
     },
     async ({ count, offset }) => {

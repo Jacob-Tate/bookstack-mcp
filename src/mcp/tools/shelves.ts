@@ -13,7 +13,7 @@ export function registerShelfTools(server: McpServer): void {
     'list-shelves',
     'List bookshelves visible to the user.',
     {
-      count: z.number().int().min(1).max(500).optional().default(100),
+      count: z.number().int().min(1).max(500).optional().default(20),
       offset: z.number().int().min(0).optional().default(0),
       sort: z.string().optional(),
       filter: z.string().optional().describe('Filter key=value e.g. "name:eq=My Shelf"'),

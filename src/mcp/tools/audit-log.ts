@@ -13,7 +13,7 @@ export function registerAuditLogTools(server: McpServer): void {
     'list-audit-log',
     'List audit log entries. Requires admin permissions.',
     {
-      count: z.number().int().min(1).max(500).optional().default(100),
+      count: z.number().int().min(1).max(500).optional().default(20),
       offset: z.number().int().min(0).optional().default(0),
       filter: z.string().optional().describe('Filter key=value e.g. "type:eq=page_create"'),
     },
